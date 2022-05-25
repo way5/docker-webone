@@ -1,6 +1,6 @@
 # WebOne HTTP 1.X Proxy on Docker
 
-This is the work in progress version of **[WebOne](https://github.com/atauenis/webone) Proxy Server** by **Alexander Tauenis** 👍 .
+This is the work in progress version of Docker image with **[WebOne](https://github.com/atauenis/webone) Proxy Server** by **Alexander Tauenis** 👍 on board.
 
 Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki) page before to change configuration files.
 
