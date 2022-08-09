@@ -1,7 +1,7 @@
 FROM alpine:3.15
-LABEL version="1.0"
+LABEL version="1.1"
 LABEL description="WebOne Proxy for vintage browsers that arn't HTTPS'in these days."
-ENV PACKAGE=webone-0.11.3
+ENV PACKAGE=webone-0.12.1
 EXPOSE 8080
 COPY ./include/ /tmp/
 
@@ -19,7 +19,5 @@ RUN apk --no-cache -U upgrade && \
     ln -s /usr/local/$PACKAGE/webone /webone.serve && \
     rm -fr /tmp/* && \
     rm -fr /var/cache/*
-    
+
 ENTRYPOINT [ "entry.sh" ]
-    
-    
