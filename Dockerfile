@@ -1,5 +1,5 @@
-FROM alpine:3.15
-LABEL version="1.2"
+FROM alpine:3.17
+LABEL version="1.2.1"
 LABEL description="WebOne Proxy for vintage browsers that arn't HTTPS'in these days."
 EXPOSE 8080
 COPY ./include/ /tmp/
@@ -12,8 +12,8 @@ RUN apk --no-cache -U upgrade && \
     /root/dotnet-install.sh -c 6.0 && \
     git clone https://github.com/atauenis/webone.git && \
     cd webone && \
-    /root/.dotnet/dotnet build ./WebOne.csproj -r alpine.3.15-x64 && \
-    /root/.dotnet/dotnet publish ./WebOne.csproj -c Release -r alpine.3.15-x64 --self-contained -o /usr/local/webone && \
+    /root/.dotnet/dotnet build ./WebOne.csproj -r alpine.3.17-x64 && \
+    /root/.dotnet/dotnet publish ./WebOne.csproj -c Release -r alpine.3.17-x64 --self-contained -o /usr/local/webone && \
     cd /usr/local/webone && rm webone.conf codepage.conf README.md CONTRIBUTING.md && \
     ### PREPARE
     mkdir /home/webone && \
