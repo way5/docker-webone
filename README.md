@@ -12,7 +12,7 @@ Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki
 > 
 > `cd docker-webone`
 > 
-> `docker build -t IMAGE_NAME .`
+> `docker build --no-cache -t IMAGE_NAME .`
 > 
 > `docker run -d -p 8080:8080 -v /your/local/webone.config:/home/webone --name CONTAINER_NAME IMAGE_NAME`
 
