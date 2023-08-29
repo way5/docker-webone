@@ -5,7 +5,7 @@ ENV    WD=/home/webone
 ENV    WOD=/usr/local/webone
 COPY   ./include/ /tmp/
 EXPOSE 8080
-HEALTHCHECK --start-period=30s --interval=3m --timeout=5s CMD curl -f http://127.0.0.1:8080 || exit 1
+HEALTHCHECK --start-period=120s --interval=3m --timeout=5s CMD curl -f http://127.0.0.1:8080 || exit 1
 
 USER root
 RUN apk --no-cache -U upgrade && \
