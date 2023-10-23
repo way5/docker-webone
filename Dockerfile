@@ -1,5 +1,5 @@
 FROM   alpine:3.18
-LABEL  version="1.3.1"
+LABEL  version="1.3.2"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ENV    WD=/home/webone
 ENV    WOD=/usr/local/webone
@@ -20,13 +20,14 @@ RUN apk --no-cache -U upgrade && \
     .dotnet/dotnet build ./webone/WebOne.csproj -r alpine.3.18-x64 && \
     .dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r alpine.3.18-x64 --self-contained -o ${WOD} && \
 ### PREPARE
-    cd ${WOD} && rm webone.conf codepage.conf README.md CONTRIBUTING.md && \
+    cd ${WOD} && rm *.conf README.md CONTRIBUTING.md && \
     cp /tmp/webone.logrotate /etc/logrotate.d/webone && \
     cp /tmp/entry.sh /usr/local/bin && \
     chmod +x /usr/local/bin/entry.sh && \
     chown -R webone:root ${WOD} && \
     ln -s ${WOD}/webone /webone.serve && \
     ln -s ${WD}/webone.conf ${WOD} && \
+    ln -s ${WD}/escargot.conf ${WOD} && \
     ln -s ${WD}/codepage.conf ${WOD} && \
     ln -s ${WD}/webone.conf.d /etc/ && \
 ### CLEANUP
