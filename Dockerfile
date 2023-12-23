@@ -1,5 +1,5 @@
-FROM   alpine:3.18
-LABEL  version="1.3.2"
+FROM   alpine:3.19
+LABEL  version="1.3.3"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ENV    WD=/home/webone
 ENV    WOD=/usr/local/webone
@@ -17,8 +17,8 @@ RUN apk --no-cache -U upgrade && \
     cd && wget https://dot.net/v1/dotnet-install.sh && chmod +x ./dotnet-install.sh && \
     ./dotnet-install.sh -c 7.0 && \
     git clone --depth 1 https://github.com/atauenis/webone.git && \
-    .dotnet/dotnet build ./webone/WebOne.csproj -r alpine.3.18-x64 && \
-    .dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r alpine.3.18-x64 --self-contained -o ${WOD} && \
+    .dotnet/dotnet build ./webone/WebOne.csproj -r alpine-x64 && \
+    .dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r alpine-x64 --self-contained -o ${WOD} && \
 ### PREPARE
     cd ${WOD} && rm *.conf README.md CONTRIBUTING.md && \
     cp /tmp/webone.logrotate /etc/logrotate.d/webone && \
