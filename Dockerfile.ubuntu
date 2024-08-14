@@ -1,0 +1,61 @@
+FROM   ubuntu:16.04
+LABEL  version="1.3.5U"
+LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
+ENV    WD=/home/webone
+ENV    WOD=/usr/local/webone
+COPY    ./include/ /tmp/
+EXPOSE 8080
+HEALTHCHECK --start-period=120s --interval=3m --timeout=5s CMD curl -f http://127.0.0.1:8080 || exit 1
+
+USER root
+RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";};' | tee /etc/apt/apt.conf.d/clean && \
+    apt-get update && apt-get -y upgrade && \
+    apt-get -y install linux-headers-generic build-essential imagemagick ffmpeg libgdiplus git libicu-dev sudo wget zlib1g-dev && \
+    adduser webone --ingroup sudo --disabled-password --gecos --disabled-login && mkdir ${WOD} && \
+    git config --global http.version HTTP/1.1 && \
+### BUILD
+    cd && wget https://dot.net/v1/dotnet-install.sh && chmod +x ./dotnet-install.sh && \
+    ./dotnet-install.sh -c 7.0 && \
+    git clone --depth=1 https://github.com/atauenis/webone.git && \
+    .dotnet/dotnet build ./webone/WebOne.csproj -r linux-x64 && \
+    .dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r linux-x64 --self-contained -o ${WOD} && \
+### PREPARE
+    cd ${WOD} && rm -fr *.conf *.cnf README.md CONTRIBUTING.md *.logrotate *.service && \
+    cp /tmp/webone.logrotate /etc/logrotate.d/webone && \
+    cp /tmp/entry.sh /usr/local/bin && \
+    cp /tmp/wgetrc /root/.wgetrc && \
+    chmod +x /usr/local/bin/entry.sh && \
+    chown -R webone:root ${WOD} && \
+    # ln -s ${WOD}/webone /webone.serve && \
+    ln -s ${WD}/webone.conf ${WOD} && \
+    ln -s ${WD}/escargot.conf ${WOD} && \
+    ln -s ${WD}/codepage.conf ${WOD} && \
+    ln -s ${WD}/openssl_webone.cnf ${WOD} && \
+    ln -s ${WD}/webone.conf.d /etc/ && \
+### OPENSSL
+    # 0.9.x
+    cd && wget https://openssl.org/source/old/1.0.1/openssl-1.0.1.tar.gz && tar -xf openssl-*.tar.gz && \
+    cd openssl-* && ./config -w --prefix=/usr/local --openssldir=/usr/lib/ssl threads zlib enable-ssl no-hw && \
+    # 3.X
+    # cd && wget https://openssl.org/source/openssl-3.3.1.tar.gz && tar -xf openssl-3.3.1.tar.gz && \
+    # cd openssl-3.3.1 && ./config -w --api=3.0 --prefix=/usr/local --openssldir=/usr/lib/ssl threads enable-weak-ssl-ciphers zlib enable-ssl \
+    # enable-md2 enable-rc2 enable-rc4 enable-rc5 enable-ssl2 enable-ssl3 enable-tls enable-dtls enable-trace no-ui-console no-shared \
+    # no-filenames no-tests no-docs && \
+    # 3.0.0
+    # cd && wget https://openssl.org/source/old/3.0/openssl-3.0.0.tar.gz && tar -xf openssl-3.0.0.tar.gz && \
+    # cd openssl-3.0.0 && ./config -w --release --prefix=/usr/local --openssldir=/usr/lib/ssl threads enable-weak-ssl-ciphers zlib enable-ssl \
+    # enable-md2 enable-rc2 enable-rc4 enable-rc5 enable-ssl2 enable-ssl3 enable-tls enable-dtls enable-trace no-ui-console no-shared no-filenames no-tests && \
+    make && \
+    apt-get -y purge openssl && \
+    # make -s -i install_sw && make -s -i install_ssldirs && \
+    make -s -i install && \
+    rm /usr/lib/ssl/openssl.cnf && ln -s ${WD}/openssl_webone.cnf /usr/lib/ssl/openssl.cnf && \
+    # sed '/\[default_sect\]/a CipherString = DEFAULT@SECLEVEL=0' /usr/lib/ssl/openssl.cnf > ./openssl.cnf && mv ./openssl.cnf /usr/lib/ssl/ && \
+### CLEANUP
+    apt-get -y purge build-essential linux-headers-generic git libicu-dev zlib1g-dev && \
+    cd /tmp && rm -fr .??* .[^.] * && \
+    cd /var/cache && rm -fr .??* .[^.] * && \
+    cd && rm -rf .??* .[^.] *
+USER webone
+
+ENTRYPOINT [ "entry.sh" ]

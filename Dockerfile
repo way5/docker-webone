@@ -1,4 +1,4 @@
-FROM   alpine:latest
+FROM   alpine:3.19
 LABEL  version="1.3.5"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ENV    WD=/home/webone
