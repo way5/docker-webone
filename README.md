@@ -16,7 +16,7 @@ Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki
 > 
 > `docker run -d -p 8080:8080 -v /your/local/webone.config:/home/webone --name CONTAINER_NAME IMAGE_NAME`
 
-- Or download it from **[DockerHub](https://hub.docker.com/repository/docker/u306060/webone)**.
+- Or download it from **[DockerHub](https://hub.docker.com/r/u306060/webone)**.
 
 ## **+ OpenSSL 1.0.1**
 
