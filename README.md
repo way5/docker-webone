@@ -6,13 +6,12 @@ Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki
 
 ## Setup and Run
 1. Create a folder on your docker host for WebOne config files. E.g. `/your/local/webone.config`
-2. Copy the [`webone.conf.d`](webone.config/webone.conf.d) folder  to the WebOne config folder including its contents: [`webone.conf.d/default`](webone.config/webone.conf.d/default.conf).
-3. Copy [`webone.conf`](webone.config/webone.conf) to the WebOne config folder.
-4. Optionally copy ['codepage.conf'](webone.config/codepage.conf), ['escargot.conf'](webone.config/escargot.conf) and ['openssl_webone.cnf'](webone.config/openssl_webone.cnf) to the WebOne config folder.
-5. Create a sub folder for the log files. E.g. `/your/local/webone.config/logs`
+2. Copy [`webone.conf`](webone.config/webone.conf) to the WebOne config folder.
+3. Create a sub folder for the log files. E.g. `/your/local/webone.config/logs`
     - Make sure the log folder is writable
-6. Edit [`webone.conf` line 60](webone.config/webone.conf#L60) and change `%SYSLOGDIR%` to `%WD%/logs`. This will configure logs to be placed in the folder created above.
-7. Run docker
+4. Edit [`webone.conf` line 60](webone.config/webone.conf#L60) and change `%SYSLOGDIR%` to `%WD%/logs`. This will configure logs to be placed in the folder created above.
+   - Remember it must be your version of webone.conf you edit.
+5. Run docker
    ```
    docker run -d -p 8080:8080 --name webone \
    -v /your/local/webone.config:/home/webone \
@@ -23,21 +22,19 @@ Note: This starts WebOne with a default setup on port 8080. The contanier will n
 
 ## Custom Port Setup and Run
 **NB**: On image version <u>0.17.3 and earlier</u> on [Docker Hub](https://hub.docker.com/r/u306060/webone/tags), this breaks the healthcheck.
-1. Follow steps [1-6] under [Setup and Run](#quick-setup-and-run)
+1. Follow steps [1-4] under [Setup and Run](#setup-and-run)
 2. Edit the [Port value of `webone.conf` line 33](webone.config/webone.conf#L33) to match your chosen port.
 3. Run the container with the added environment variable `SERVICE_PORT` and new port mappings. Example where the chosen port is `8181`:
       ```
       docker run -d -p 8181:8181 --name webone \
-      -e SERVICE_PORT=8181 \
       -v /your/local/webone.config:/home/webone \
       u306060/webone:latest
       ```
 
 ## Advanced Setup and Run
-1. Follow steps [1-6] under [Setup and Run](#quick-setup-and-run)
+1. Follow steps [1-4] under [Setup and Run](#quick-setup-and-run)
 2. Edit, add and/or remove configuration in your `webone.conf`. See more [on the WebOne wiki](https://github.com/atauenis/webone/wiki/Configuration-file) about the configuration file.
     - Remember, if you change the Port, follow the instructions in [Custom Port Setup and Run](custom-port-setup-and-run).
-
 
 ## A note OpenSSL 1.0.1
 
