@@ -4,38 +4,27 @@ This is the work in progress version of Docker image with **[WebOne](https://git
 
 Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki) page before to change configuration files.
 
-## Setup and Run
-1. Create a folder on your docker host for WebOne config files. E.g. `/your/local/webone.config`
-2. Copy [`webone.conf`](webone.config/webone.conf) to the WebOne config folder.
-3. Create a sub folder for the log files. E.g. `/your/local/webone.config/logs`
-    - Make sure the log folder is writable
-4. Edit [`webone.conf` line 60](webone.config/webone.conf#L60) and change `%SYSLOGDIR%` to `%WD%/logs`. This will configure logs to be placed in the folder created above.
-   - Remember it must be your version of webone.conf you edit.
-5. Run docker
-   ```
-   docker run -d -p 8080:8080 --name webone \
-   -v /your/local/webone.config:/home/webone \
-   u306060/webone:latest
-   ``` 
+## + Setup and Run
 
-Note: This starts WebOne with a default setup on port 8080. The contanier will not start if the port is already occupied.
+>[!WARNING]Note
+By default WebOne is running on port `8080`. If you'd need to change it, go to the configuration file [default.conf](webone.config/webone.conf.d/default.conf) and look for the option `Port`. Before continue you may also change the external port which is going to be exposed by Docker image. Change option `EXPOSE` in [Dockerfile](./Dockerfile), then proceed with building.
 
-## Custom Port Setup and Run
-**NB**: On image version <u>0.17.3 and earlier</u> on [Docker Hub](https://hub.docker.com/r/u306060/webone/tags), this breaks the healthcheck.
-1. Follow steps [1-4] under [Setup and Run](#setup-and-run)
-2. Edit the [Port value of `webone.conf` line 33](webone.config/webone.conf#L33) to match your chosen port.
-3. Run the container with the added environment variable `SERVICE_PORT` and new port mappings. Example where the chosen port is `8181`:
-      ```
-      docker run -d -p 8181:8181 --name webone \
-      -v /your/local/webone.config:/home/webone \
-      u306060/webone:latest
-      ```
+1. Clone this repoository `git clone ...` on your host machine that runs Docker.
+2. Create a directory for WebOne config files. E.g.: `/your/local/webone`.
+3. Copy all files and directtories from [`/webone.conf`](./webone.config/) to your local WebOne config directory from the previoous step.
+   1. The [default.conf](/webone.config/webone.conf.d/default.conf) may be used for adding custom configuration or to `override` any configuration options from original `webone.conf`. 
+   Custom log file paths and the WebOne port, along with another custom options could be set there without the need of changing original `webone.conf`.
+4. Make sure all newly created directories are writable to user that runs WebOne.
+5. Run Docker:
+   1. Eather download the latest build from **[DockerHub](https://hub.docker.com/r/u306060/webone)** and run it using WebOne config directory you've created and the proper port.
+   2. Or build the image yourself:
 
-## Advanced Setup and Run
-1. Follow steps [1-4] under [Setup and Run](#quick-setup-and-run)
-2. Edit, add and/or remove configuration in your `webone.conf`. See more [on the WebOne wiki](https://github.com/atauenis/webone/wiki/Configuration-file) about the configuration file.
-    - Remember, if you change the Port, follow the instructions in [Custom Port Setup and Run](custom-port-setup-and-run).
+```bash
+cd docker-webone
+docker build --no-cache -t IMAGE_NAME .`
+docker run -d -p 8080:8080 -v /your/local/webone:/home/webone --name CONTAINER_NAME IMAGE_NAME
+```
 
-## A note OpenSSL 1.0.1
+## + OpenSSL 1.0.1
 
-Since WebOne version 0.17.0 there is [`Added support for browsing HTTPS with pre-2004 browsers without certificate`](https://github.com/atauenis/webone/releases/tag/v0.17.0) which seems to work fine in standalone versions, however it shows an issue (`OpenSSL error - ca md too weak`) on Docker images. The Ubuntu based build was created for the purpose of testing this functionality.
+Since WebOne version 0.17.0 there is [`Added support for browsing HTTPS with pre-2004 browsers without certificate`](https://github.com/atauenis/webone/releases/tag/v0.17.0) which seems to work fine in standalone versions, however it shows an issue (`OpenSSL error - ca md too weak`) on Docker images. The Ubuntu based build (`Docker images with the TAG: 0.XX.X-101`) was created for the purpose of testing this functionality.
