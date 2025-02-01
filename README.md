@@ -6,7 +6,7 @@ Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki
 
 ## + Setup and Run
 
->[!WARNING]Note
+>[!IMPORTANT]
 By default WebOne is running on port `8080`. If you'd need to change it, go to the configuration file [default.conf](webone.config/webone.conf.d/default.conf) and look for the option `Port`. Before continue you may also change the external port which is going to be exposed by Docker image. Change option `EXPOSE` in [Dockerfile](./Dockerfile), then proceed with building.
 
 1. Clone this repoository `git clone ...` on your host machine that runs Docker.
