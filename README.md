@@ -1,30 +1,72 @@
 # WebOne HTTP 1.X Proxy on Docker
 
-This is work in progress version of `Docker image` with **[WebOne](https://github.com/atauenis/webone) Proxy Server** by **Alexander Tauenis** 👍 on board.
+This is the work in progress version of Docker image with **[WebOne](https://github.com/atauenis/webone) Proxy Server** by **Alexander Tauenis** 👍 on board.
 
 Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki) page before to change configuration files.
 
-## + Setup and Run
+## Building
 
->[!IMPORTANT]
-By default WebOne is running on port `8080`. If you'd need to change it, go to the configuration file [default.conf](webone.config/webone.conf.d/default.conf) and look for the option `Port`. Before continue you may also change the external port which is going to be exposed by Docker image. Change option `EXPOSE` in [Dockerfile](./Dockerfile), then proceed with building.
+If your want to build your own image, please refer to [CONTRIBUTING](CONTRIBUTING.md).
 
-1. Clone this repoository `git clone ...` on your host machine that runs Docker.
-2. Create a directory for WebOne config files. E.g.: `/your/local/webone`.
-3. Copy all files and directtories from [`/webone.conf`](./webone.config/) to your local WebOne config directory from the previoous step.
-   1. The [default.conf](/webone.config/webone.conf.d/default.conf) may be used for adding custom configuration or to `override` any configuration options from original `webone.conf`. 
-   Custom log file paths and the WebOne port, along with another custom options could be set there without the need of changing original `webone.conf`.
-4. Make sure all newly created directories are writable to user that runs WebOne.
-5. Run Docker:
-   1. Eather download the latest build from **[DockerHub](https://hub.docker.com/r/u306060/webone)** and run it using WebOne config directory you've created and the proper port.
-   2. Or build the image yourself:
+## Quick Setup and Run
+Run the container with default setting, configuring host and port via environment variables `SERVICE_PORT` and `PROXY_HOSTNAME`.
 
-```bash
-cd docker-webone
-docker build --no-cache -t IMAGE_NAME .`
-docker run -d -p 8080:8080 -v /your/local/webone:/home/webone --name CONTAINER_NAME IMAGE_NAME
+```
+docker run -d -p 8080:8080 --name webone \
+-e CONFIG_PATH=/home/webone/config/default/webone.conf \
+-e SERVICE_PORT=8080 -e PROXY_HOSTNAME=localhost \
+u306060/webone:latest
 ```
 
-## + OpenSSL 1.0.1
+Note: Only versions after version `0.17.4`.
 
-Since WebOne version 0.17.0 there is [`Added support for browsing HTTPS with pre-2004 browsers without certificate`](https://github.com/atauenis/webone/releases/tag/v0.17.0) which seems to work fine in standalone versions, however it shows an issue (`OpenSSL error - ca md too weak`) on Docker images. The Ubuntu based build (`Docker images with the TAG: 0.XX.X-101`) was created for the purpose of testing this functionality.
+## Setup and Run with custom config
+1. Create a folder on your docker host for WebOne config files. E.g. `/your/local/webone_config` on *nix or `C:\WebOne\webone_config` on Window
+2. Copy [`webone.conf`](include/config/default/webone.conf) to the WebOne config folder you just created.
+3. Edit [`webone.conf`](include/config/default/webone.conf) and change any value you would like. You can also change `Port` and `DefaultHostName` to fixed values, to avoid setting them via the environment variables `SERVICE_PORT` and `PROXY_HOSTNAME`.
+4. Run docker (*nix)
+   ```
+   docker run -d -p 8080:8080 --name webone \
+   -v /your/local/webone_config:/home/webone/config/myconfig \
+   -e CONFIG_PATH='/home/webone/config/myconfig' \
+   -e SERVICE_PORT=9080 -e PROXY_HOSTNAME=localhost 
+   u306060/webone:latest
+   ```
+   Run docker (Windows)
+   ```
+   docker run -d -p 8080:8080 --name webone \
+   -v C:\WebOne\webone_config:/home/webone/config/myconfig \
+   -e CONFIG_PATH='/home/webone/config/myconfig' \
+   -e SERVICE_PORT=9080 -e PROXY_HOSTNAME=localhost 
+   u306060/webone:latest
+   ```
+
+## Extra config files
+Extra config files are loaded using the [Include statement in `webone.conf`](include/config/default/webone.conf#L1034). These config files are placed in the container's `/etc/webone.conf.d/` folder.
+
+The default files are [`codepage.conf`](include/webone.conf.d/codepage.conf) and [`escargot.conf`](include/webone.conf.d/escargot.conf).
+
+You can override these by either mounting a volume with your own extra config files in `/etc/webone.conf.d/`, or you can mount a local folder with your own config files as a volume with a different path inside the container, and change your 
+[`webone.conf`](include/config/default/webone.conf#L1034) accordingly.
+
+### Example
+Run on custom port 9080 overrding the extra conf dir my mounting a volume `/your/local/webone_extras` on that path. Any valid conf-files in that dir will also be loaded, (if your `webone.conf`'s include statement points to `/etc/webone.conf.d`)
+   1. Follow step 1, 2 and 3 under [Quick Setup and Run](#quick-setup-and-run)
+   2. Edit the [`Port` value](webone.config/webone.conf#L33) to match your chosen port.
+   3. Create a local folder for extra config files, e.g. `/your/local/webone_extras`
+   4. Place any or no conf-files in that folder
+   5. Run the container with added variable `SERVICE_PORT` and new port mappings and with the local folder created in the step before the previous mounted as `/etc/webone.conf.d`:
+   ```
+   docker run -d -p 9080:9080 --name webone \
+   -v /your/local/webone_config:/home/webone/config/myconfig \
+   -v /your/local/webone_extras:/etc/webone.conf.d \
+   -e CONFIG_PATH='/home/webone/config/myconfig'
+   -e SERVICE_PORT=9080 \
+   u306060/webone:latest
+   ```
+* Run using the minimal built-in
+
+
+## A note about OpenSSL 1.0.1
+
+Since WebOne version 0.17.0 there is [`Added support for browsing HTTPS with pre-2004 browsers without certificate`](https://github.com/atauenis/webone/releases/tag/v0.17.0) which seems to work fine in standalone versions, however it shows an issue (`OpenSSL error - ca md too weak`) on Docker images. The Ubuntu based build was created for the purpose of testing this functionality.

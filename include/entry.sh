@@ -1,4 +1,11 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
-rm -f /var/log/webone.log
-/usr/local/webone/webone
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Run /usr/local/webone/webone with CONFIG_PATH if it is set
+if [ -n "$CONFIG_PATH" ]; then
+    exec /usr/local/webone/webone "$CONFIG_PATH"
+else
+    exec /usr/local/webone/webone
+fi
