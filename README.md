@@ -9,12 +9,12 @@ Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki
 If your want to build your own image, please refer to [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Quick Setup and Run
-Run the container with default setting, configuring host and port via environment variables `SERVICE_PORT` and `PROXY_HOSTNAME`.
+Run the container with default setting on port `8080`, configuring host via environment variable `PROXY_HOSTNAME`.
 
 ```
 docker run -d -p 8080:8080 --name webone \
 -e CONFIG_PATH=/home/webone/config/default/webone.conf \
--e SERVICE_PORT=8080 -e PROXY_HOSTNAME=localhost \
+-e PROXY_HOSTNAME=mydockerhost \
 u306060/webone:latest
 ```
 
@@ -23,13 +23,13 @@ Note: Only versions after version `0.17.4`.
 ## Setup and Run with custom config
 1. Create a folder on your docker host for WebOne config files. E.g. `/your/local/webone_config` on *nix or `C:\WebOne\webone_config` on Window
 2. Copy [`webone.conf`](include/config/default/webone.conf) to the WebOne config folder you just created.
-3. Edit [`webone.conf`](include/config/default/webone.conf) and change any value you would like. You can also change `Port` and `DefaultHostName` to fixed values, to avoid setting them via the environment variables `SERVICE_PORT` and `PROXY_HOSTNAME`.
+3. Edit [`webone.conf`](include/config/default/webone.conf) and change any value you would like. You can also change `DefaultHostName` to fixed values, to avoid setting it via the environment variable `PROXY_HOSTNAME`.
 4. Run docker (*nix)
    ```
    docker run -d -p 8080:8080 --name webone \
    -v /your/local/webone_config:/home/webone/config/myconfig \
    -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e SERVICE_PORT=9080 -e PROXY_HOSTNAME=localhost 
+   -e PROXY_HOSTNAME=mydockerhost 
    u306060/webone:latest
    ```
    Run docker (Windows)
@@ -37,9 +37,11 @@ Note: Only versions after version `0.17.4`.
    docker run -d -p 8080:8080 --name webone \
    -v C:\WebOne\webone_config:/home/webone/config/myconfig \
    -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e SERVICE_PORT=9080 -e PROXY_HOSTNAME=localhost 
+   -e PROXY_HOSTNAME=mydockerhost 
    u306060/webone:latest
    ```
+
+Note: If you change the `Port` value in [`webone.conf`](include/config/default/webone.conf) or change the `SERVICE_PORT` variable via the `docker run` command, you also need to change the port mapping.
 
 ## Extra config files
 Extra config files are loaded using the [Include statement in `webone.conf`](include/config/default/webone.conf#L1034). These config files are placed in the container's `/etc/webone.conf.d/` folder.

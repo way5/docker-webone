@@ -10,7 +10,6 @@ ARG    SSLWD=/etc/ssl
 ENV    LOG_PATH=${WD}/logs
 ENV    SSL_PATH=${WD}/ssl
 ENV    CONFIG_PATH=${WD}/config/default/webone.conf
-#ENV    CONFIG_PATH=${WD}/config/minimal/webone.conf
 ENV    SERVICE_PORT=8080
 
 COPY   ./include/ /tmp/
