@@ -54,15 +54,15 @@ You can override these by either mounting a volume with your own extra config fi
 ### Example
 Run on custom port 9080 overrding the extra conf dir my mounting a volume `/your/local/webone_extras` on that path. Any valid conf-files in that dir will also be loaded, (if your `webone.conf`'s include statement points to `/etc/webone.conf.d`)
    1. Follow step 1, 2 and 3 under [Setup and Run with custom config](#setup-and-run-with-custom-config)
-   2. Edit the [`Port` value](webone.config/webone.conf#L33) to match your chosen port.
-   3. Create a local folder for extra config files, e.g. `/your/local/webone_extras`
-   4. Place any or no conf-files in that folder
-   5. Run the container with added variable `SERVICE_PORT` and new port mappings and with the local folder created in the step before the previous mounted as `/etc/webone.conf.d`:
+   2. Create a local folder for extra config files, e.g. `/your/local/webone_extras`
+   3. Place any or no conf-files in that folder
+   4. Run the container with added variable `SERVICE_PORT` and new port mappings and with the local folder created in the step before the previous mounted as `/etc/webone.conf.d`:
    ```
    docker run -d -p 9080:9080 --name webone \
    -v /your/local/webone_config:/home/webone/config/myconfig \
    -v /your/local/webone_extras:/etc/webone.conf.d \
-   -e CONFIG_PATH='/home/webone/config/myconfig'
+   -e CONFIG_PATH='/home/webone/config/myconfig' \
+   -e PROXY_HOST=mydockerhost \
    -e SERVICE_PORT=9080 \
    u306060/webone:latest
    ```
