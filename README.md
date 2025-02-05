@@ -62,12 +62,10 @@ Run on custom port 9080 overrding the extra conf dir my mounting a volume `/your
    -v /your/local/webone_config:/home/webone/config/myconfig \
    -v /your/local/webone_extras:/etc/webone.conf.d \
    -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e PROXY_HOST=mydockerhost \
+   -e PROXY_HOSTNAME=mydockerhost \
    -e SERVICE_PORT=9080 \
    u306060/webone:latest
    ```
-* Run using the minimal built-in
-
 
 ## A note about OpenSSL 1.0.1
 
