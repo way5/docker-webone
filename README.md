@@ -53,7 +53,7 @@ You can override these by either mounting a volume with your own extra config fi
 
 ### Example
 Run on custom port 9080 overrding the extra conf dir my mounting a volume `/your/local/webone_extras` on that path. Any valid conf-files in that dir will also be loaded, (if your `webone.conf`'s include statement points to `/etc/webone.conf.d`)
-   1. Follow step 1, 2 and 3 under [Quick Setup and Run](#quick-setup-and-run)
+   1. Follow step 1, 2 and 3 under [Setup and Run with custom config](#setup-and-run-with-custom-config)
    2. Edit the [`Port` value](webone.config/webone.conf#L33) to match your chosen port.
    3. Create a local folder for extra config files, e.g. `/your/local/webone_extras`
    4. Place any or no conf-files in that folder
