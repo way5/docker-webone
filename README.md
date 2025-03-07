@@ -4,69 +4,55 @@ This is the work in progress version of Docker image with **[WebOne](https://git
 
 Please refer to the original 🔥 [Wiki](https://github.com/atauenis/webone/wiki) page before to change configuration files.
 
-## Building
-
-If your want to build your own image, please refer to [CONTRIBUTING](CONTRIBUTING.md).
+## Contributing
+If your want to build your own image or to share your code, please read about the [CONTRIBUTING](CONTRIBUTING.md) first.
 
 ## Quick Setup and Run
-Run the container with default setting on port `8080`, configuring host via environment variable `PROXY_HOSTNAME`.
+Run the container on port `8080` and the default configuration at `/etc/webone_defaults.conf`.
 
-```
-docker run -d -p 8080:8080 --name webone \
--e CONFIG_PATH=/home/webone/config/default/webone.conf \
--e PROXY_HOSTNAME=mydockerhost \
-u306060/webone:latest
+```bash
+docker run -d -p 8080:8080 --name webone u306060/webone:latest
 ```
 
-Note: Only versions after version `0.17.4`.
+## Environment variables (version 0.17.4 and higher):
+These are used as a container-wide accessible values and could be used in WebOne configuration as `%YOUR_ENV_VARIABLE%`. E.g.: `DefaultHostName=%PROXY_HOSTNAME%`.
 
-## Setup and Run with custom config
-1. Create a folder on your docker host for WebOne config files. E.g. `/your/local/webone_config` on *nix or `C:\WebOne\webone_config` on Window
-2. Copy [`webone.conf`](include/config/default/webone.conf) to the WebOne config folder you just created.
-3. Edit [`webone.conf`](include/config/default/webone.conf) and change any value you would like. You can also change `DefaultHostName` to fixed values, to avoid setting it via the environment variable `PROXY_HOSTNAME`.
-4. Run docker (*nix)
-   ```
-   docker run -d -p 8080:8080 --name webone \
-   -v /your/local/webone_config:/home/webone/config/myconfig \
-   -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e PROXY_HOSTNAME=mydockerhost 
-   u306060/webone:latest
-   ```
-   Run docker (Windows)
-   ```
-   docker run -d -p 8080:8080 --name webone \
-   -v C:\WebOne\webone_config:/home/webone/config/myconfig \
-   -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e PROXY_HOSTNAME=mydockerhost 
-   u306060/webone:latest
-   ```
+| Name | Description |
+|:---|:----|
+| SERVICE_PORT | _(optional)_ This port number *must* be the same as the exposed (container external) port, on which WebOne oprates. And it's used for the container healthcheck feature allowing Docker to make sure your instance of WebOne is up and running. Default value: `8080` |
+| PROXY_HOSTNAME | _(optional)_ Custom WebOne hostname, for more details see #[160](https://github.com/atauenis/webone/issues/160) (see also `DefaultHostName` in [custom.conf](/configuration/custom.conf)). |
+| CONFIG_PATH | _(optional)_ The main (`webone.conf`) configuration path. By default WebOne is expecting the configuration at `/etc/webone.conf.d/webone.conf` or in the same directory where it has been installed. You may change this path to, for instance: `/your/directory/webone.conf`, of cource if directory `/your/directory` exists or it is exposed to the host machine with `-v` option. |
+| LOG_DIR | _(optional)_ A directory where WebOne will store log files, by default it is `/etc/webone.conf.d/logs`. It could be used in configuration as `AppendLogFile=%LOG_DIR%/webone.log` (see: [custom.conf](/configuration/custom.conf)).  |
 
-Note: If you change the `Port` value in [`webone.conf`](include/config/default/webone.conf) or change the `SERVICE_PORT` variable via the `docker run` command, you also need to change the port mapping.
+## [Custom configuration]
+1. Create a directory on your host machine (e.g. `/your/local/webone_configs` for *nix or `C:\WebOne\webone_configs` for Windows) and copy the [configuration](./configuration) directory contents into it;
+2. Edit `custom.conf` as needed. You may expand the list of customized options, using ones from [webone.conf](./configuration/webone.conf);
+3. Run docker
 
-## Extra config files
-Extra config files are loaded using the [Include statement in `webone.conf`](include/config/default/webone.conf#L1034). These config files are placed in the container's `/etc/webone.conf.d/` folder.
+    ```bash
+    docker run -d -p 8080:8080 --name webone \
+    -v /your/local/webone_configs:/etc/webone.conf.d \
+    -e CONFIG_PATH=/etc/webone.conf.d/webone.conf \
+    -e SERVICE_PORT=8080 \
+    -e LOG_DIR=/etc/webone.conf.d/logs \
+    -e PROXY_HOSTNAME=mydockerhost \
+    u306060/webone:latest
+    ```
 
-The default files are [`codepage.conf`](include/webone.conf.d/codepage.conf) and [`escargot.conf`](include/webone.conf.d/escargot.conf).
+    for Windows change the configuration folder respectively:
 
-You can override these by either mounting a volume with your own extra config files in `/etc/webone.conf.d/`, or you can mount a local folder with your own config files as a volume with a different path inside the container, and change your 
-[`webone.conf`](include/config/default/webone.conf#L1034) accordingly.
+    ```bash
+    ...
+    -v C:\WebOne\webone_configs:/home/webone \
+    ...
+    ```
 
-### Example
-Run on custom port 9080 overrding the extra conf dir my mounting a volume `/your/local/webone_extras` on that path. Any valid conf-files in that dir will also be loaded, (if your `webone.conf`'s include statement points to `/etc/webone.conf.d`)
-   1. Follow step 1, 2 and 3 under [Setup and Run with custom config](#setup-and-run-with-custom-config)
-   2. Create a local folder for extra config files, e.g. `/your/local/webone_extras`
-   3. Place any or no conf-files in that folder
-   4. Run the container with added variable `SERVICE_PORT` and new port mappings and with the local folder created in the step before the previous mounted as `/etc/webone.conf.d`:
-   ```
-   docker run -d -p 9080:9080 --name webone \
-   -v /your/local/webone_config:/home/webone/config/myconfig \
-   -v /your/local/webone_extras:/etc/webone.conf.d \
-   -e CONFIG_PATH='/home/webone/config/myconfig' \
-   -e PROXY_HOSTNAME=mydockerhost \
-   -e SERVICE_PORT=9080 \
-   u306060/webone:latest
-   ```
+>[!NOTE]
+>The `Port` option value and `SERVICE_PORT` variable value must be equal (see: [`custom.conf`](./configuration/custom.conf)).
 
-## A note about OpenSSL 1.0.1
+Custom configuration files are loaded using the include statement as one at the very end of [webone.conf](./configuration/webone.conf). By default the Docker image is self-sufficient, which means that it already carries the default configuration and could be started right after dowloading without any change.
+The defaults could be overriden by using [Custom configuration](#custom-configuration) approach.
+
+## OpenSSL
 
 Since WebOne version 0.17.0 there is [`Added support for browsing HTTPS with pre-2004 browsers without certificate`](https://github.com/atauenis/webone/releases/tag/v0.17.0) which seems to work fine in standalone versions, however it shows an issue (`OpenSSL error - ca md too weak`) on Docker images. The Ubuntu based build was created for the purpose of testing this functionality.
