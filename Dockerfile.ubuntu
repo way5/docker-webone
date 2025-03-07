@@ -10,8 +10,6 @@ ENV    CONFIG_PATH=${CONFIG_DEFAULTS}/webone.conf
 ENV    LOG_DIR=${CONFIG_DEFAULTS}/logs
 ENV    SERVICE_PORT=8080
 
-EXPOSE ${SERVICE_PORT}
-
 COPY   ./include/ /tmp/
 COPY   ./configuration/ /tmp/config/
 
