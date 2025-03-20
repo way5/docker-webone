@@ -1,5 +1,18 @@
+### VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
 
-# General
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -26,7 +39,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Windows thumbnail cache files
+### Windows
+# thumbnail cache files
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
@@ -51,18 +65,20 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-.vscode/*
-# !.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+### Linux
+*~
 
-# Local History for Visual Studio Code
-.history/
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
 
-# Built Visual Studio Code Extensions
-*.vsix
+# KDE directory preferences
+.directory
 
-# Custom
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+### Custom
 assets/

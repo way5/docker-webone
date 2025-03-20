@@ -7,5 +7,5 @@ set -e
 if [ -n "$CONFIG_PATH" ] && [ -f "$CONFIG_PATH" ]; then
     exec /usr/local/webone/webone $CONFIG_PATH
 else
-    exec /usr/local/webone/webone /etc/webone_defaults.conf
+    exec /usr/local/webone/webone /etc/webone/webone.conf
 fi
