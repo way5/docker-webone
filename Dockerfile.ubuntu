@@ -1,11 +1,12 @@
 FROM   ubuntu:16.04
-LABEL  version="1.3.7"
+LABEL  version="1.3.8"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
 ARG    INSTALL_DIR=/usr/local/webone
 ARG    SSL_SYSTEM=/etc/ssl
 ARG    CONFIG_DEFAULTS=/etc/webone
+ENV    TIMEZONE=""
 ENV    CONFIG_PATH=${CONFIG_DEFAULTS}/webone.conf
 ENV    LOG_DIR=${CONFIG_DEFAULTS}/logs
 ENV    SERVICE_PORT=8080
@@ -20,7 +21,7 @@ WORKDIR /root
 ### PREPARE
 RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";};' | tee /etc/apt/apt.conf.d/clean && \
     apt-get update && apt-get -y upgrade && \
-    apt-get -y install linux-headers-generic build-essential imagemagick ffmpeg libgdiplus git libicu-dev sudo wget zlib1g-dev ca-certificates --no-install-recommends && \
+    apt-get -y install linux-headers-generic build-essential imagemagick ffmpeg libgdiplus git libicu-dev sudo wget zlib1g-dev ca-certificates tzdata --no-install-recommends && \
     adduser webone --ingroup sudo --no-create-home --disabled-password --gecos --disabled-login && \
     git config --global http.version HTTP/1.1 && \
 ### DOWNLOAD AND BUILD
@@ -31,6 +32,7 @@ RUN echo 'DPkg::Post-Invoke {"/bin/rm -f /var/cache/apt/archives/*.deb || true";
     /root/.dotnet/dotnet build ./webone/WebOne.csproj -r linux-x64 && \
     /root/.dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r linux-x64 --self-contained -o ${INSTALL_DIR} && \
 ### CONFIGURATION
+    if [[ ! -z "${TIMEZONE}" ]]; then timedatectl set-timezone ${TIMEZONE}; fi && \
     mkdir -p ${CONFIG_DEFAULTS} && \
     mkdir -p ${LOG_DIR} && \
     echo "check_certificate = off" > /root/.wgetrc &&  \
