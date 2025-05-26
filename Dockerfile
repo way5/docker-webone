@@ -1,7 +1,7 @@
 FROM   alpine:3.21
 LABEL  version="1.4.2"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
-ARG    REPO=https://github.com/way5/webone.git
+ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
 ARG    INSTALL_DIR=/usr/local/webone
 ARG    SSL_SYSTEM=/etc/ssl
