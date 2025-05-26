@@ -1,5 +1,5 @@
 FROM   ubuntu:16.04
-LABEL  version="1.3.8"
+LABEL  version="1.3.9"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
@@ -10,6 +10,8 @@ ENV    TIMEZONE=""
 ENV    CONFIG_PATH=${CONFIG_DEFAULTS}/webone.conf
 ENV    LOG_DIR=${CONFIG_DEFAULTS}/logs
 ENV    SERVICE_PORT=8080
+
+EXPOSE ${SERVICE_PORT}
 
 COPY   ./include/ /tmp/
 COPY   ./configuration/ /tmp/config/
