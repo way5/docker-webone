@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        ".env*": "dotenv",
+        "plyconfig.json": "jsonc"
+    }
+}

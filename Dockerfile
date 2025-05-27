@@ -1,14 +1,17 @@
 FROM   alpine:3.21
-LABEL  version="1.4.0"
+LABEL  version="1.4.2"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
 ARG    INSTALL_DIR=/usr/local/webone
 ARG    SSL_SYSTEM=/etc/ssl
-ARG    CONFIG_DEFAULTS=/etc/webone.conf.d
+ARG    CONFIG_DEFAULTS=/etc/webone
+ENV    TIMEZONE=""
 ENV    CONFIG_PATH=${CONFIG_DEFAULTS}/webone.conf
 ENV    LOG_DIR=${CONFIG_DEFAULTS}/logs
 ENV    SERVICE_PORT=8080
+
+EXPOSE ${SERVICE_PORT}
 
 COPY   ./include/ /tmp/
 COPY   ./configuration/ /tmp/config/
@@ -19,7 +22,7 @@ USER root
 WORKDIR /root
 ### PREPARE
 RUN apk --no-cache -U upgrade && \
-    apk --no-cache add libstdc++ libgcc libintl icu-libs imagemagick ffmpeg yt-dlp logrotate bash git openssl curl wget && \
+    apk --no-cache add libstdc++ libgcc libintl icu-libs imagemagick ffmpeg yt-dlp logrotate bash git openssl curl wget tzdata && \
     apk --no-cache add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ && \
     adduser -D -S -s /bin/bash -H webone && \
     git config --global http.version HTTP/1.1 && \
@@ -31,6 +34,7 @@ RUN apk --no-cache -U upgrade && \
     /root/.dotnet/dotnet build ./webone/WebOne.csproj -r alpine-x64 && \
     /root/.dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r alpine-x64 --self-contained -o ${INSTALL_DIR} && \
 ### CONFIGURATION
+    if [[ ! -z "${TIMEZONE}" ]]; then ln -s "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime; fi && \
     mkdir -p ${CONFIG_DEFAULTS} && \
     mkdir -p ${LOG_DIR} && \
     cp -r /tmp/config/* ${CONFIG_DEFAULTS} && \
