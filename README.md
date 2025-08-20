@@ -27,18 +27,7 @@ These are used as a container-wide accessible values and could be used in WebOne
 | PROXY_HOSTNAME | _(optional)_ Custom WebOne hostname, for more details see #[160](https://github.com/atauenis/webone/issues/160) (see also `DefaultHostName` in [custom.conf](/configuration/custom.conf)). |
 | CONFIG_PATH | _(optional)_ The main (`webone.conf`) configuration path. By default WebOne is expecting the configuration at `/etc/webone/webone.conf` or in the same directory where it has been installed. You may change this path to, for instance: `/your/directory/webone.conf`, of cource if directory `/your/directory` exists or it is exposed to the host machine with `-v` option. |
 | LOG_DIR | _(optional)_ A directory where WebOne will store log files, by default it is `/etc/webone/logs`. It could be used in configuration as `AppendLogFile=%LOG_DIR%/webone.log` (see: [custom.conf](/configuration/custom.conf)).  |
-| TIMEZONE | _(optional)_ It is recommended to set up the correct timezone for your container so timestamps which prints WebOne become meaningful. You can find your timezone name [on WiKi](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), see `TZ identifier` column. |
-
-
-Running with default configuration but overrriding hostname (to "mydockerhost"), port (to 7070) and setting timezone (Asia/Tomsk) using environment variables:
-
-    ```bash
-    docker run -d -p 7070:7070 --name webone \
-    -e TIMEZONE=Asia/Tomsk \
-    -e SERVICE_PORT=7070 \
-    -e PROXY_HOSTNAME=mydockerhost \
-    u306060/webone:latest
-    ```
+| TIMEZONE | _(optional)_ It is recommended to set up the correct timezone for your container so timestamps which prints WebOne become meaningful. You can find your timezone name [on WiKi](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), see `TZ identtifier` column. |
 
 ## Custom configuration<a id="custom-configuration"></a>
 1. Create a directory on your host machine (e.g. `/your/local/webone_configs` for *nix or `C:\WebOne\webone_configs` for Windows) and copy the [configuration](./configuration) directory contents into it;
@@ -63,6 +52,9 @@ Running with default configuration but overrriding hostname (to "mydockerhost"),
     -v C:\WebOne\webone_configs:/home/webone \
     ...
     ```
+
+>[!NOTE]
+>The `Port` option value and `SERVICE_PORT` variable value must be equal (see: [`custom.conf`](./configuration/custom.conf)).
 
 Custom configuration files are loaded using the include statement as one at the very end of [webone.conf](./configuration/webone.conf). By default the Docker image is self-sufficient, which means that it already carries the default configuration and could be started right after dowloading without any change.
 The defaults could be overriden by using [Custom configuration](#custom-configuration) approach.
