@@ -1,5 +1,5 @@
-FROM   alpine:3.21
-LABEL  version="1.4.2"
+FROM   alpine:latest
+LABEL  version="1.4.3"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
@@ -10,6 +10,7 @@ ENV    TIMEZONE=""
 ENV    CONFIG_PATH=${CONFIG_DEFAULTS}/webone.conf
 ENV    LOG_DIR=${CONFIG_DEFAULTS}/logs
 ENV    SERVICE_PORT=8080
+ENV    PROXY_HOSTNAME=%HostName%
 
 EXPOSE ${SERVICE_PORT}
 
