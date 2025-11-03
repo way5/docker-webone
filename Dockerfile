@@ -1,5 +1,5 @@
 FROM   alpine:latest
-LABEL  version="1.4.4"
+LABEL  version="1.4.5"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
@@ -32,8 +32,8 @@ RUN apk --no-cache -U upgrade && \
     chmod +x ./dotnet-install.sh && \
     ./dotnet-install.sh -c 8.0 && \
     git clone --depth 1 --branch ${BRANCH} ${REPO} && \
-    /root/.dotnet/dotnet build ./webone/WebOne.csproj -r alpine-x64 && \
-    /root/.dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r alpine-x64 --self-contained -o ${INSTALL_DIR} && \
+    /root/.dotnet/dotnet build ./webone/WebOne.csproj -r linux-musl-x64 && \
+    /root/.dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r linux-musl-x64 --self-contained -o ${INSTALL_DIR} && \
 ### CONFIGURATION
     if [[ ! -z "${TIMEZONE}" ]]; then ln -s "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime; fi && \
     mkdir -p ${CONFIG_DEFAULTS} && \
