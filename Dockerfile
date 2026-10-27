@@ -1,5 +1,5 @@
 FROM   alpine:latest
-LABEL  version="1.4.6"
+LABEL  version="1.4.7"
 LABEL  description="WebOne is a HTTP(S) Proxy for vintage browsers that aren't HTTPS'in these days"
 ARG    REPO=https://github.com/atauenis/webone.git
 ARG    BRANCH=master
@@ -30,7 +30,7 @@ RUN apk --no-cache -U upgrade && \
 ### DOWNLOAD AND BUILD
     wget --progress=dot:giga https://dot.net/v1/dotnet-install.sh && \
     chmod +x ./dotnet-install.sh && \
-    ./dotnet-install.sh -c 8.0 && \
+    ./dotnet-install.sh -c 10.0 && \
     git clone --depth 1 --branch ${BRANCH} ${REPO} && \
     /root/.dotnet/dotnet build ./webone/WebOne.csproj -r linux-musl-x64 && \
     /root/.dotnet/dotnet publish ./webone/WebOne.csproj -c Release -r linux-musl-x64 --self-contained -o ${INSTALL_DIR} && \
